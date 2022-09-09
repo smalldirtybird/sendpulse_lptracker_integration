@@ -24,11 +24,12 @@ def main():
 
     # задаём настройки
     lpt_project_id = 94698
-    ltp_new_lead_step = 1708039
+    lpt_new_lead_step = 1708039
     lpt_lead_owner_id = 33327
     sp_step_id = 142896
     sp_pipeline_id = 43308
-    sp_final_status = 3
+    sp_success_status = 3
+    sp_fail_status = 2
 
     # запрашиваем у sendpulse список новых сделок
     sp_deals = sendpulse.get_deals(
@@ -38,6 +39,7 @@ def main():
         1,
     )
     for deal in sp_deals:
+        sp_final_status = sp_fail_status
         # для каждой сделки получаем всю информацию
         deal_details = sendpulse.get_deal(sp_token, deal['id'])
 
@@ -52,56 +54,46 @@ def main():
                 break
 
         # находим хотя бы один телефон и e-mail
-        phone = None
-        email = None
         if contact_details['phones']:
             phone = contact_details['phones'][0]['phone']
-        if contact_details['emails']:
-            email = contact_details['emails'][0]['email']
 
-        # ищем по телефону и почте контакт в lptracker
-        lpt_contact_id = lptracker.search_contact(
-            lpt_token,
-            lpt_project_id,
-            phone=phone,
-            email=email,
-        )
-
-        # если контакт не найден - создаём новый
-        if not lpt_contact_id:
-            lpt_contact_id = lptracker.create_person(
+            # ищем по телефону и почте контакт в lptracker
+            lpt_contact_id = lptracker.search_contact(
                 lpt_token,
                 lpt_project_id,
-                f'{contact_details["lastName"]}' 
-                f'{contact_details["firstName"]}',
                 phone=phone,
-                email=email,
             )
 
-        # находим владельца лида в lptracker
-        sp_resp_email = sendpulse.get_responsible_email(
+            # если контакт не найден - создаём новый
+            if not lpt_contact_id:
+                lpt_contact_id = lptracker.create_person(
+                    lpt_token,
+                    lpt_project_id,
+                    f'{contact_details["lastName"]}' 
+                    f'{contact_details["firstName"]}',
+                    phone=phone,
+                )
+
+                # создаём в lptracker новый лид
+                created_at = isoparse(deal_details['createdAt'])
+                lead_created = lptracker.create_lead(
+                    lpt_token,
+                    deal_details['name'],
+                    contact_id=lpt_contact_id,
+                    funnel_id=lpt_new_lead_step,
+                    callback=False,
+                    lead_owner_id=lpt_lead_owner_id
+                )
+                if lead_created['status'] == 'success':
+                    sp_final_status = sp_success_status
+
+        # закрываем сделку в sendpulse
+        sendpulse.change_deal_status(
             sp_token,
-            deal_details['responsibleId'],
+            deal_details['id'],
+            deal_details,
+            sp_final_status,
         )
-
-        # создаём в lptracker новый лид
-        created_at = isoparse(deal_details['createdAt'])
-        lead_created = lptracker.create_lead(
-            lpt_token,
-            deal_details['name'],
-            datetime.strftime(created_at, '%d.%m.%Y %H:%M'),
-            contact_id=lpt_contact_id,
-            funnel_id=ltp_new_lead_step,
-        )
-
-        ## закрываем сделку в sendpulse как успешную
-        # if lead_created['status'] == 'success':
-            # sendpulse.change_deal_status(
-            #     sp_token,
-            #     deal_details['id'],
-            #     deal_details,
-            #     sp_final_status,
-            # )
 
 
 if __name__ == '__main__':

@@ -14,7 +14,6 @@ def authorization(login, password, service_name):
         'version': '1.0',
     }
     response = requests.post(urljoin(base_url, path), json=payload)
-    print(response.text)
     return response.json()
 
 
@@ -44,10 +43,12 @@ def create_person(token, project_id, name, profession=None, site=None,
         headers=headers,
         json=payload,
     )
-    return response.json()['result']['id']
+    person_created = response.json()
+    if person_created['status'] == 'success':
+        return response.json()['result']['id']
 
 
-def search_contact(token, project_id, email=None, phone=None):
+def search_contact(token, project_id, phone=None):
     path = '/contact/search'
     headers = {
         'token': token,
@@ -55,7 +56,6 @@ def search_contact(token, project_id, email=None, phone=None):
     params = {
         'project_id': project_id,
         'phone': phone,
-        'email': email,
     }
     response = requests.get(
         urljoin(base_url, path),
@@ -84,8 +84,8 @@ def get_funnel_steps(token, project_id):
     return response.json()
 
 
-def create_lead(token, name, lead_date, contact_id=None, callback=False,
-                funnel_id=None, deal_date=None, lead_owner_id=0):
+def create_lead(token, name, contact_id=None, callback=False,
+                funnel_id=None, lead_owner_id=0):
     path = '/lead'
     headers = {
         'token': token,
@@ -95,8 +95,6 @@ def create_lead(token, name, lead_date, contact_id=None, callback=False,
         'name': name,
         'callback': callback,
         'funnel': funnel_id,
-        'lead_date': lead_date,
-        'deal_date': deal_date,
         'owner': lead_owner_id
     }
     
@@ -105,7 +103,6 @@ def create_lead(token, name, lead_date, contact_id=None, callback=False,
         headers=headers,
         json=payload,
     )
-    print(response.text)
     return response.json()
 
 
