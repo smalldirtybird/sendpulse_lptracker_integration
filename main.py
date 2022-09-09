@@ -80,6 +80,7 @@ def main():
     sp_fail_status = config['sp_fail_status']
     delay_time = config['delay_time']
     exception_delay = config['exception_delay']
+    sp_search_status_id = config['sp_search_status_id']
     while True:
         try:
             tokens_validation(
@@ -95,7 +96,7 @@ def main():
                 sp_token,
                 [sp_pipeline_id],
                 sp_step_id,
-                1,
+                sp_search_status_id,
             )
             for deal in sp_deals:
                 sp_final_status = sp_fail_status
