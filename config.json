@@ -8,5 +8,6 @@
   "sp_step_id": 142896,
   "sp_pipeline_id": 43308,
   "sp_success_status": 3,
-  "sp_fail_status": 2
+  "sp_fail_status": 2,
+  "exception_delay": 60
 }
