@@ -46,7 +46,7 @@ def get_deals(token, pipeline_ids, step_id, status):
         json=payload,
     )
     response.raise_for_status()
-    return response.json()
+    return response.json()['data']
 
 
 def get_deal(token, deal_id):
@@ -60,8 +60,7 @@ def get_deal(token, deal_id):
         headers=headers,
     )
     response.raise_for_status()
-    # return response.json()['data']
-    return response.text
+    return response.json()['data']
 
 
 def get_pipelines(token):
@@ -143,3 +142,40 @@ def get_contact_details(token, contact_id):
     )
     response.raise_for_status()
     return response.json()['data']
+
+
+def change_deal_status(token, deal_id, deal_details, sp_final_status):
+    path = f'/crm/v1/deals/{deal_id}'
+    headers = {
+        'accept': 'application/json',
+        'Authorization': f'Bearer {token}',
+    }
+    payload = {
+        'pipelineId': deal_details['pipelineId'],
+        'status': sp_final_status,
+        'stepId': deal_details['stepId'],
+        'responsibleId': deal_details['responsibleId'],
+        'name': deal_details['name'],
+        'price': deal_details['price'],
+        'currency': deal_details['currency'],
+        'sourceId': deal_details['sourceId'],
+        'order': deal_details['order'],
+    }
+    response = requests.put(
+        urljoin(base_url, path), json=payload,
+        headers=headers,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def get_responsible_email(token, responsible_id):
+    path = '/crm/v1/users'
+    headers = {
+        'accept': 'application/json',
+        'Authorization': f'Bearer {token}',
+    }
+    response = requests.get(urljoin(base_url, path), headers=headers)
+    for user in response.json()['data']:
+        if user['id'] == responsible_id:
+            return user['email']

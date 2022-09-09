@@ -8,12 +8,13 @@ base_url = 'https://direct.lptracker.ru'
 def authorization(login, password, service_name):
     path = '/login'
     payload = {
-        "login": login,
-        "password": password,
-        "service": service_name,
-        "version": "1.0",
+        'login': login,
+        'password': password,
+        'service': service_name,
+        'version': '1.0',
     }
     response = requests.post(urljoin(base_url, path), json=payload)
+    print(response.text)
     return response.json()
 
 
@@ -74,23 +75,37 @@ def get_contact(token, contact_id):
     return response.json()
 
 
-def create_lead(token, name, contact_id=None, contact=None,
-                callback=False):
+def get_funnel_steps(token, project_id):
+    path = f'/project/{project_id}/funnel'
+    headers = {
+        'token': token,
+    }
+    response = requests.get(urljoin(base_url, path), headers=headers)
+    return response.json()
+
+
+def create_lead(token, name, lead_date, contact_id=None, callback=False,
+                funnel_id=None, deal_date=None, lead_owner_id=0):
     path = '/lead'
     headers = {
         'token': token,
     }
     payload = {
-        "contact_id": contact_id,
-        "contact": contact,
-        "name": name,
-        "callback": callback,
+        'contact_id': contact_id,
+        'name': name,
+        'callback': callback,
+        'funnel': funnel_id,
+        'lead_date': lead_date,
+        'deal_date': deal_date,
+        'owner': lead_owner_id
     }
+    
     response = requests.post(
         urljoin(base_url, path),
         headers=headers,
         json=payload,
     )
+    print(response.text)
     return response.json()
 
 
@@ -112,6 +127,15 @@ def get_leads(token, project_id):
 
 def get_projects(token):
     path = '/projects'
+    headers = {
+        'token': token
+    }
+    response = requests.get(urljoin(base_url, path), headers=headers)
+    return response.json()
+
+
+def get_users(token):
+    path = '/staff'
     headers = {
         'token': token
     }
