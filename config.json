@@ -1,5 +1,6 @@
 {
   "time_reserve": 60,
+  "delay_time": 1,
   "lpt_token_lifetime": 86400,
   "lpt_project_id": 94698,
   "lpt_new_lead_step": 1708039,
