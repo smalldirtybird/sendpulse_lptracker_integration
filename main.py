@@ -1,3 +1,4 @@
+from time import sleep
 import os
 import lptracker_api as lptracker
 import sendpulse_api as sendpulse
@@ -29,7 +30,7 @@ def main():
 
     load_dotenv()
 
-    while Ture:
+    while True:
         #авторизуемся
         global sp_token_expires, sp_token, lpt_token, lpt_token_expires
         current_time = datetime.now()
@@ -96,7 +97,7 @@ def main():
                     lpt_contact_id = lptracker.create_person(
                         lpt_token,
                         lpt_project_id,
-                        f'{contact_details["lastName"]}'
+                        f'{contact_details["lastName"]} '
                         f'{contact_details["firstName"]}',
                         phone=phone,
                     )
@@ -111,6 +112,7 @@ def main():
                         lead_owner_id=lpt_lead_owner_id
                     )
                     if lead_created['status'] == 'success':
+                        # print(lead_created)
                         sp_final_status = sp_success_status
 
             # закрываем сделку в sendpulse
@@ -120,6 +122,7 @@ def main():
                 deal_details,
                 sp_final_status,
             )
+        sleep(1)
 
 
 if __name__ == '__main__':
