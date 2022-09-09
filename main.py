@@ -1,12 +1,12 @@
-from time import sleep
+import json
 import os
+from datetime import datetime, timedelta
+from time import sleep
+
+from dotenv import load_dotenv
+
 import lptracker_api as lptracker
 import sendpulse_api as sendpulse
-from dotenv import load_dotenv
-from datetime import datetime, timedelta
-from pprint import pprint
-import json
-
 
 sp_token_expires = datetime.now()
 sp_token = None

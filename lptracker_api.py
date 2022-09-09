@@ -97,7 +97,6 @@ def create_lead(token, name, contact_id=None, callback=False,
         'funnel': funnel_id,
         'owner': lead_owner_id
     }
-    
     response = requests.post(
         urljoin(base_url, path),
         headers=headers,
