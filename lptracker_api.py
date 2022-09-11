@@ -78,6 +78,15 @@ def get_contact(token: str, contact_id: int) -> dict:
     return response.json()
 
 
+def delete_contact(token: str, contact_id: int) -> dict:
+    path = f'/contact/{contact_id}'
+    headers = {
+        'token': token,
+    }
+    response = requests.delete(urljoin(base_url, path), headers=headers)
+    return response.json()
+
+
 def get_funnel_steps(token: str, project_id: int) -> dict:
     path = f'/project/{project_id}/funnel'
     headers = {
