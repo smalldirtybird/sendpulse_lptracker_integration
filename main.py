@@ -69,18 +69,7 @@ def main():
         os.environ['TELEGRAM_BOT_TOKEN'], os.environ['TELEGRAM_CHAT_ID']))
     with open('config.json', 'r') as config_json:
         config = json.load(config_json)
-    time_reserve = config['time_reserve']
-    lpt_token_lifetime = config['lpt_token_lifetime']
     lpt_project_id = config['lpt_project_id']
-    lpt_new_lead_step = config['lpt_new_lead_step']
-    lpt_lead_owner_id = config['lpt_lead_owner_id']
-    sp_step_id = config['sp_step_id']
-    sp_pipeline_id = config['sp_pipeline_id']
-    sp_success_status = config['sp_success_status']
-    sp_fail_status = config['sp_fail_status']
-    delay_time = config['delay_time']
-    exception_delay = config['exception_delay']
-    sp_search_status_id = config['sp_search_status_id']
     while True:
         try:
             tokens_validation(
@@ -89,17 +78,17 @@ def main():
                 os.environ['LPTRACKER_LOGIN'],
                 os.environ['LPTRACKER_PASSWORD'],
                 'sendpulse_lptracker_integration',
-                lpt_token_lifetime,
-                time_reserve,
+                config['lpt_token_lifetime'],
+                config['time_reserve'],
             )
             sp_deals = sendpulse.get_deals(
                 sp_token,
-                [sp_pipeline_id],
-                sp_step_id,
-                sp_search_status_id,
+                [config['sp_pipeline_id']],
+                config['sp_step_id'],
+                config['sp_search_status_id'],
             )
             for deal in sp_deals:
-                sp_final_status = sp_fail_status
+                sp_final_status = config['sp_fail_status']
                 phone = None
                 lpt_contact_id = None
                 deal_details = sendpulse.get_deal(sp_token, deal['id'])
@@ -110,7 +99,7 @@ def main():
                     lpt_contact_id = lptracker.search_contact(
                         lpt_token,
                         lpt_project_id,
-                        phone=phone,
+                        phone=contact_details['phones'][0]['phone'],
                     )
                 if not lpt_contact_id:
                     lpt_contact_id = lptracker.create_person(
@@ -124,24 +113,24 @@ def main():
                         lpt_token,
                         deal_details['name'],
                         contact_id=lpt_contact_id,
-                        funnel_id=lpt_new_lead_step,
+                        funnel_id=config['lpt_new_lead_step'],
                         callback=False,
-                        lead_owner_id=lpt_lead_owner_id
+                        lead_owner_id=config['lpt_lead_owner_id']
                     )
                     if lead_created['status'] == 'success':
-                        sp_final_status = sp_success_status
+                        sp_final_status = config['sp_success_status']
                 sendpulse.change_deal_status(
                     sp_token,
                     deal_details['id'],
                     deal_details,
                     sp_final_status,
                 )
-            sleep(delay_time)
+            sleep(config['delay_time'])
         except Exception:
             logger.error(
                 f'SP LPT inegration crushed with exception:\n'
                 f'{traceback.format_exc()}')
-            sleep(exception_delay)
+            sleep(config['exception_delay'])
 
 
 if __name__ == '__main__':
