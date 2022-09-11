@@ -64,7 +64,7 @@ def get_deal(token: str, deal_id: int) -> dict:
     return response.json()['data']
 
 
-def delete_deal(token: str, deal_id: int) -> dict:
+def delete_deal(token: str, deal_id: int) -> str:
     path = f'/crm/v1/deals/{deal_id}'
     headers = {
         'accept': 'application/json',
@@ -75,7 +75,7 @@ def delete_deal(token: str, deal_id: int) -> dict:
         headers=headers,
     )
     response.raise_for_status()
-    return response.json()
+    return response.text
 
 
 def get_pipelines(token: str) -> dict:

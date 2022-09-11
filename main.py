@@ -125,7 +125,7 @@ def main():
                     deal_details,
                     sp_final_status,
                 )
-                sleep(config['delay_time'])
+            sleep(config['delay_time'])
         except Exception:
             logger.error(
                 f'SP LPT inegration crushed with exception:\n'
