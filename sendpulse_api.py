@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 base_url = 'https://api.sendpulse.com'
 
 
-def authorization(client_id, client_secret):
+def authorization(client_id: str, client_secret: str) -> dict:
     path = '/oauth/access_token'
     payload = {
         'grant_type': 'client_credentials',
@@ -17,7 +17,8 @@ def authorization(client_id, client_secret):
     return response.json()
 
 
-def get_deals(token, pipeline_ids, step_id, status):
+def get_deals(token: str, pipeline_ids: list, step_ids: list,
+              status_ids: list) -> list:
     path = '/crm/v1/deals/get-list'
     headers = {
         'accept': 'application/json',
@@ -30,13 +31,13 @@ def get_deals(token, pipeline_ids, step_id, status):
         "filter": [
             {
                 "name": "stepId",
-                "expression": "eq",
-                "value": step_id,
+                "expression": "in",
+                "value": step_ids,
             },
             {
                 "name": "status",
-                "expression": "eq",
-                "value": status,
+                "expression": "in",
+                "value": status_ids,
             },
         ]
     }
@@ -49,7 +50,7 @@ def get_deals(token, pipeline_ids, step_id, status):
     return response.json()['data']
 
 
-def get_deal(token, deal_id):
+def get_deal(token: str, deal_id: int) -> dict:
     path = f'/crm/v1/deals/{deal_id}'
     headers = {
         'accept': 'application/json',
@@ -63,7 +64,7 @@ def get_deal(token, deal_id):
     return response.json()['data']
 
 
-def get_pipelines(token):
+def get_pipelines(token: str) -> dict:
     path = '/crm/v1/pipelines'
     headers = {
         'accept': 'application/json',
@@ -74,7 +75,7 @@ def get_pipelines(token):
     return response.json()
 
 
-def get_contacts(token):
+def get_contacts(token: str) -> dict:
     path = '/crm/v1/contacts/get-list'
     headers = {
         'accept': 'application/json',
@@ -88,8 +89,9 @@ def get_contacts(token):
     return response.json()
 
 
-def create_deal(token, pipeline_id, step_id, responsible_id, name, price,
-                currency, source_id, contact_id):
+def create_deal(token: str, pipeline_id: int, step_id: int,
+                responsible_id: int, name: str, price: float, currency: str,
+                source_id: str, contact_id: int) -> dict:
     path = '/crm/v1/deals'
     headers = {
         'accept': 'application/json',
@@ -116,7 +118,7 @@ def create_deal(token, pipeline_id, step_id, responsible_id, name, price,
     return response.json()
 
 
-def get_users(token):
+def get_users(token: str) -> dict:
     path = '/crm/v1/users'
     headers = {
         'accept': 'application/json',
@@ -130,7 +132,7 @@ def get_users(token):
     return response.json()
 
 
-def get_contact_details(token, contact_id):
+def get_contact_details(token: str, contact_id: int) -> dict:
     path = f'/crm/v1/contacts/{contact_id}'
     headers = {
         'accept': 'application/json',
@@ -144,7 +146,8 @@ def get_contact_details(token, contact_id):
     return response.json()['data']
 
 
-def change_deal_status(token, deal_id, deal_details, sp_final_status):
+def change_deal_status(token: str, deal_id: int, deal_details: dict,
+                       sp_final_status: int) -> dict:
     path = f'/crm/v1/deals/{deal_id}'
     headers = {
         'accept': 'application/json',
@@ -167,15 +170,3 @@ def change_deal_status(token, deal_id, deal_details, sp_final_status):
     )
     response.raise_for_status()
     return response.json()
-
-
-def get_responsible_email(token, responsible_id):
-    path = '/crm/v1/users'
-    headers = {
-        'accept': 'application/json',
-        'Authorization': f'Bearer {token}',
-    }
-    response = requests.get(urljoin(base_url, path), headers=headers)
-    for user in response.json()['data']:
-        if user['id'] == responsible_id:
-            return user['email']

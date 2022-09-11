@@ -83,9 +83,9 @@ def main():
             )
             sp_deals = sendpulse.get_deals(
                 sp_token,
-                [config['sp_pipeline_id']],
-                config['sp_step_id'],
-                config['sp_search_status_id'],
+                config['sp_pipeline_ids'],
+                config['sp_step_ids'],
+                config['sp_search_status_ids'],
             )
             for deal in sp_deals:
                 sp_final_status = config['sp_fail_status']
