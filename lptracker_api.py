@@ -1,11 +1,11 @@
-import requests
 from urllib.parse import urljoin
 
+import requests
 
 base_url = 'https://direct.lptracker.ru'
 
 
-def authorization(login, password, service_name):
+def authorization(login: str, password: str, service_name: str) -> dict:
     path = '/login'
     payload = {
         'login': login,
@@ -17,8 +17,10 @@ def authorization(login, password, service_name):
     return response.json()
 
 
-def create_person(token, project_id, name, profession=None, site=None,
-                  fields=None, **kwargs):
+def create_person(token: str, project_id: int, name: str,
+                  profession: str = None, site: str = None,
+                  fields: dict = None,
+                  **kwargs) -> int:
     path = '/contact'
     headers = {
         'token': token,
@@ -48,7 +50,7 @@ def create_person(token, project_id, name, profession=None, site=None,
         return response.json()['result']['id']
 
 
-def search_contact(token, project_id, phone=None):
+def search_contact(token: str, project_id: int, phone: int = None) -> int:
     path = '/contact/search'
     headers = {
         'token': token,
@@ -62,11 +64,12 @@ def search_contact(token, project_id, phone=None):
         params=params,
         headers=headers,
     )
-    found = response.json()['result']
-    return found[0]['id'] if found else None
+    found = response.json()
+    if found['status'] == 'success' and found['result']:
+        return found['result'][0]['id']
 
 
-def get_contact(token, contact_id):
+def get_contact(token: str, contact_id: int) -> dict:
     path = f'/contact/{contact_id}'
     headers = {
         'token': token,
@@ -75,7 +78,7 @@ def get_contact(token, contact_id):
     return response.json()
 
 
-def get_funnel_steps(token, project_id):
+def get_funnel_steps(token: str, project_id: int) -> dict:
     path = f'/project/{project_id}/funnel'
     headers = {
         'token': token,
@@ -84,8 +87,9 @@ def get_funnel_steps(token, project_id):
     return response.json()
 
 
-def create_lead(token, name, contact_id=None, callback=False,
-                funnel_id=None, lead_owner_id=0):
+def create_lead(token: str, name: str, contact_id: int = None,
+                callback: bool = False, funnel_id: int = None,
+                lead_owner_id: int = 0) -> dict:
     path = '/lead'
     headers = {
         'token': token,
@@ -105,7 +109,7 @@ def create_lead(token, name, contact_id=None, callback=False,
     return response.json()
 
 
-def get_leads(token, project_id):
+def get_leads(token: str, project_id: int) -> dict:
     path = f'/lead/{project_id}/list'
     headers = {
         'token': token,
@@ -121,7 +125,7 @@ def get_leads(token, project_id):
     return response.json()
 
 
-def get_projects(token):
+def get_projects(token: str) -> dict:
     path = '/projects'
     headers = {
         'token': token
@@ -130,7 +134,7 @@ def get_projects(token):
     return response.json()
 
 
-def get_users(token):
+def get_users(token: str) -> dict:
     path = '/staff'
     headers = {
         'token': token

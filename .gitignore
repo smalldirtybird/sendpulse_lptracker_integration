@@ -152,3 +152,4 @@ cython_debug/
 .idea/
 add_sendpulse_deals.py
 test/
+test*
