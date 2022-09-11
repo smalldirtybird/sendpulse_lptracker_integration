@@ -10,7 +10,7 @@ RUN pip3 install -r requirements.txt
 
 COPY . /
 
-ENTRYPOINT [ "python3" ]
+ENTRYPOINT [ "/bin/sh" ]
 
-CMD [ "main.py" ]
+CMD [ "./launcher.sh" ]
 
