@@ -17,6 +17,15 @@ def authorization(login: str, password: str, service_name: str) -> dict:
     return response.json()
 
 
+def get_projects(token):
+    path = f'/projects'
+    headers = {
+        'token': token,
+    }
+    response = requests.get(urljoin(base_url, path), headers=headers)
+    return response.json()
+
+
 def create_person(token: str, project_id: int, name: str,
                   profession: str = None, site: str = None,
                   fields: dict = None,
