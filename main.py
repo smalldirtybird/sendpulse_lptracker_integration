@@ -126,7 +126,7 @@ def main():
                         deal_details['name'],
                         contact_id=lpt_contact_id,
                         funnel_id=config['lpt_new_lead_step'],
-                        callback=False,
+                        callback=config['lpt_callback'],
                         lead_owner_id=config['lpt_lead_owner_id']
                     )
                     if lead_created['status'] == 'success':

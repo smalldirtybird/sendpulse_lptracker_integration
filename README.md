@@ -56,6 +56,7 @@ TELEGRAM_CHAT_ID = id_чата_для_уведомлений
   "lpt_project_id": 94698, # id проекта LPTracker
   "lpt_new_lead_step": 1708039, # id шага воронки LPTracker, в который попадает сделка при переносе
   "lpt_lead_owner_id": 33327, # id владельца сделки в LPTracker
+  "lpt_callback": false, # запрос обратного звонка
   "sp_search_status_ids": [1], # массив с id статусов сделок Sendpulse, по которым ведётся поиск новых сделок
   "sp_step_ids": [142896], # массив с id шагов воронки Sendpulse, по которым ведётся поиск новых сделок
   "sp_pipeline_ids": [43308], # массив с id воронки Sendpulse, в которым ведётся поиск новых сделок
