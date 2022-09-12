@@ -91,9 +91,10 @@ def main():
                 config['sp_step_ids'],
                 config['sp_search_status_ids'],
             )
-            logger.info(dedent(f'''
-            {datetime.now()}: found {len(sp_deals)} new deals.
-            '''))
+            if sp_deals:
+                logger.info(dedent(f'''
+                {datetime.now()}: found {len(sp_deals)} new deals.
+                '''))
             for deal in sp_deals:
                 deal_id = deal['id']
                 logger.info(dedent(f'''
