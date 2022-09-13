@@ -28,21 +28,17 @@ SP_SECRET = Secret_аккаунта_SendPulse
 LPTRACKER_LOGIN = email_главного_аккаунта_LPTracker
 LPTRACKER_PASSWORD = пароль_главного_аккаунта_LPTracker
 ```
-
-6. Для мониторинга ошибок, критических ошибок, которые возникают во время работы приложения, используются возможности Telegram-бота. Нового бота можно создать, написав сообщение [Отцу ботов](https://t.me/BotFather) и выполнив его инструкции (всего 2 шага). Когда новый бот будет готов, Вы получите токен бота, который так же необходимо внести в .env файл:
-```
-TELEGRAM_BOT_TOKEN = токен_от_телеграм_бота
-```
-
-7. Укажите id чата, в который будут приходить сообщения об ошибках работы скрипта. Получить его можно, написав по [инфоботу](https://t.me/userinfobot). Полученный id нужно внести в .env файл:
-```
-TELEGRAM_CHAT_ID = id_чата_для_уведомлений
-```
 ВАЖНО: Перед запуском нужно написать боту любое сообщение, чтобы он "подхватил" id чата. Это нужно делать только при первом запуске.
 
 Заполненный .env файл должен выглядеть так:
+``` python
+LPTRACKER_LOGIN = example@email.co
+LPTRACKER_PASSWORD = eXaMPlepWd
+SP_ID = bsbo1m9e6tae1xct3dbo7n9oetcc7o0p2y5
+SP_SECRET = s1o2maedt4e7x7tdd1o6n8oet0ccobp3y7
 
-![](https://psv4.userapi.com/c235131/u328907/docs/d16/be7e0393a67e/Screenshot_from_2022-09-09_20-17-38.png?extra=K4LYBjsbneIi98eLpCEDohH13dajyEuVLai0uHIyFZCw16_05vAecoV2N4uZRMUJGxVdQ4Nu1rXBnShhLclOTUQNkw6LhPtwDRY9cfWvHiyxsUQMam4OfES-ABoyDaA5b8Ae0VVA_9qXv9as)
+```
+
 
 ## Настройка файла конфигурации
 
