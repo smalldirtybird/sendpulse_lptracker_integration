@@ -1,14 +1,11 @@
 import json
 import logging
 import os
-import traceback
 from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
-from textwrap import dedent
 from time import sleep
 
 from dotenv import load_dotenv
-from telegram import Bot
 
 import lptracker_api as lptracker
 import sendpulse_api as sendpulse
@@ -31,9 +28,7 @@ def tokens_validation(sp_id, sp_secret, lpt_login, lpt_password, lpt_grant,
         sp_token_expires = current_time + timedelta(
             seconds=(expires_in - time_reserve)
         )
-        logger.info(dedent(f'''
-        {datetime.now()}: sp_token refreshed.
-        '''))
+        logger.info(f'{datetime.now()}: sp_token refreshed.')
     if current_time >= lpt_token_expires:
         lpt_authorization = lptracker.authorization(
             lpt_login,
@@ -44,9 +39,7 @@ def tokens_validation(sp_id, sp_secret, lpt_login, lpt_password, lpt_grant,
         lpt_token_expires = current_time + timedelta(
             seconds=(lpt_token_lifetime - time_reserve)
         )
-        logger.info(dedent(f'''
-        {datetime.now()}: lpt_token refreshed.
-        '''))
+        logger.info(f'{datetime.now()}: lpt_token refreshed.')
 
 
 def get_contact_from_deal(deal_details):
@@ -66,11 +59,10 @@ def main():
     logger.setLevel(logging.DEBUG)
     handler = RotatingFileHandler(
         os.path.join(log_folder, 'app.log'),
-        maxBytes=102400,
+        maxBytes=1024000,
         backupCount=10,
     )
     logger.addHandler(handler)
-    tg_bot = Bot(os.environ['TELEGRAM_BOT_TOKEN'])
     with open('config.json', 'r') as config_json:
         config = json.load(config_json)
     lpt_project_id = config['lpt_project_id']
@@ -92,14 +84,10 @@ def main():
                 config['sp_search_status_ids'],
             )
             if sp_deals:
-                logger.info(dedent(f'''
-                {datetime.now()}: found {len(sp_deals)} new deals.
-                '''))
+                logger.info(f'{datetime.now()}: found deals: {len(sp_deals)}.')
             for deal in sp_deals:
                 deal_id = deal['id']
-                logger.info(dedent(f'''
-                {datetime.now()}: start handle deal {deal_id}.
-                '''))
+                logger.info(f'{datetime.now()}: start handle deal {deal_id}.')
                 sp_final_status = config['sp_fail_status']
                 phone = None
                 lpt_contact_id = None
@@ -131,29 +119,19 @@ def main():
                     )
                     if lead_created['status'] == 'success':
                         sp_final_status = config['sp_success_status']
-                        logger.info(dedent(f'''
-                        {datetime.now()}: created new lead, id {
-                        lead_created["result"]["id"]}.
-                        '''))
+                        lead_id = lead_created["result"]["id"]
+                        logger.info(f'{datetime.now()}: created lead'
+                                    f' {lead_id}.')
                 sendpulse.change_deal_status(
                     sp_token,
                     deal_details['id'],
                     deal_details,
                     sp_final_status,
                 )
-                logger.info(dedent(f'''
-                {datetime.now()}: deal {deal_id} handled.
-                '''))
+                logger.info(f'{datetime.now()}: deal {deal_id} handled.')
             sleep(config['delay_time'])
         except Exception:
             logger.exception(datetime.now())
-            tg_bot.send_message(
-                text=f'''
-                SP LPT inegration crushed with exception:
-                {traceback.format_exc()}
-                ''',
-                chat_id=os.environ['TELEGRAM_CHAT_ID'],
-            )
             sleep(config['exception_delay'])
 
 
