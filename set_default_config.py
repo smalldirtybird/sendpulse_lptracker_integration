@@ -15,6 +15,7 @@ def main():
         'time_reserve': 60,
         'delay_time': 1,
         'lpt_token_lifetime': 86400,
+        'lpt_project_id': None,
         'lpt_new_lead_step': None,
         'lpt_lead_owner_id': 0,
         'lpt_callback': True,
@@ -34,22 +35,28 @@ def main():
         os.environ['LPTRACKER_PASSWORD'],
         'sendpulse_lptracker_integration',
     )['result']['token']
-    lpt_project_id = get_projects(
-        lpt_token)['result'][0]['id']
-    default_data['lpt_project_id'] = lpt_project_id
     print('\nПользователи LPTracker:')
     for user in get_users(lpt_token)['result']:
         print(f'{user["id"]}: {user["name"]}, {user["job"]}')
-    print('\nШаги воронки LPTracker:')
-    for step in get_funnel_steps(lpt_token, lpt_project_id)['result']:
-        print(f'{step["id"]}: {step["name"]}')
-        if step["name"] == 'Новый лид':
-            default_data['lpt_new_lead_step'] = step["id"]
+    print('\nПроекты LPTracker')
+    projects = {}
+    for project in get_projects(lpt_token)['result']:
+        project_id = project["id"]
+        project_name = project["name"]
+        print(f'{project_id}: {project_name}')
+        print(f'\nШаги воронки проекта {project_name}:')
+        for step in get_funnel_steps(lpt_token, project_id)['result']:
+            print(f'{step["id"]}: {step["name"]}')
+            if step["name"] == 'Новый лид':
+                projects[project_id] = step["id"]
+    lpt_project_id = min(projects.keys())
+    default_data['lpt_project_id'] = lpt_project_id
+    default_data['lpt_new_lead_step'] = projects[lpt_project_id]
     print('\nВоронки SendPulse:')
     pipelines = {}
     for pipeline in get_pipelines(sp_token)['data']:
         print(f'{pipeline["id"]}: {pipeline["name"]}')
-        print(f'Шаги воронки {pipeline["name"]}:')
+        print(f'\nШаги воронки {pipeline["name"]}:')
         steps = []
         for step in pipeline['steps']:
             print(f'{step["id"]}: {step["name"]}')
