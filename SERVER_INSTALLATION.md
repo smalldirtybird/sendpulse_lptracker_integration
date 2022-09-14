@@ -134,7 +134,7 @@ nano config.json
 
 1. Переходим в папку с репозиторием:
 ```
-cd git/sendpulse_lptracker_integration/
+cd ~/git/sendpulse_lptracker_integration
 ```
 2. Активируем виртуальное окружение:
 ```
