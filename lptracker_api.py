@@ -140,7 +140,7 @@ def get_leads(token: str, project_id: int) -> dict:
         params=params,
         headers=headers,
     )
-    return response.json()
+    return response.json()['result']
 
 
 def get_projects(token: str) -> dict:
@@ -158,4 +158,4 @@ def get_users(token: str) -> dict:
         'token': token
     }
     response = requests.get(urljoin(base_url, path), headers=headers)
-    return response.json()
+    return response.json()['result']
