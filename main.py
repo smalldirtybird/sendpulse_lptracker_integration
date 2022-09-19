@@ -104,6 +104,7 @@ def main():
                 sp_final_status = config['sp_fail_status']
                 phone = None
                 lpt_contact_id = None
+                lead_created = None
                 deal_details = sendpulse.get_deal(sp_token, deal_id)
                 contact_details = get_contact_from_deal(deal_details)
                 if contact_details['phones']:
@@ -130,20 +131,20 @@ def main():
                         callback=config['lpt_callback'],
                         lead_owner_id=config['lpt_lead_owner_id']
                     )
-                    if lead_created['status'] == 'success':
-                        sp_final_status = config['sp_success_status']
-                        lead_id = lead_created["result"]["id"]
-                        logger.info(f'{datetime.now()}: created lead'
-                                    f' {lead_id}.')
-                        lead_owner_id = lpt_users[0]
-                        new_lead_owner_id = lptracker.change_lead_owner(
-                            lpt_token,
-                            lead_id,
-                            lead_owner_id,
-                        )['result']['owner_id']
-                        lpt_users.remove(new_lead_owner_id)
-                        logger.info(f'{datetime.now()}: lead owner changed to'
-                                    f' {new_lead_owner_id}.')
+                if lead_created and lead_created['status'] == 'success':
+                    sp_final_status = config['sp_success_status']
+                    lead_id = lead_created["result"]["id"]
+                    logger.info(f'{datetime.now()}: created lead'
+                                f' {lead_id}.')
+                    lead_owner_id = lpt_users[0]
+                    new_lead_owner_id = lptracker.change_lead_owner(
+                        lpt_token,
+                        lead_id,
+                        lead_owner_id,
+                    )['result']['owner_id']
+                    lpt_users.remove(new_lead_owner_id)
+                    logger.info(f'{datetime.now()}: lead owner changed to'
+                                f' {new_lead_owner_id}.')
                 sendpulse.change_deal_status(
                     sp_token,
                     deal_details['id'],
