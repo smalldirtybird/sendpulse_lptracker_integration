@@ -74,7 +74,7 @@ def main():
     with open('config.json', 'r') as config_json:
         config = json.load(config_json)
     lpt_project_id = config['lpt_project_id']
-    users_to_exclude = [0]
+    users_to_exclude = config['lpt_exclude_from_owners']
     while True:
         try:
             tokens_validation(
@@ -98,7 +98,6 @@ def main():
                 if not lpt_users:
                     create_users_list(lptracker.get_users(lpt_token),
                                       users_to_exclude)
-                print(lpt_users)
                 deal_id = deal['id']
                 logger.info(f'{datetime.now()}: start handle deal {deal_id}.')
                 sp_final_status = config['sp_fail_status']
@@ -129,7 +128,6 @@ def main():
                         contact_id=lpt_contact_id,
                         funnel_id=config['lpt_new_lead_step'],
                         callback=config['lpt_callback'],
-                        lead_owner_id=config['lpt_lead_owner_id']
                     )
                 if lead_created and lead_created['status'] == 'success':
                     sp_final_status = config['sp_success_status']
