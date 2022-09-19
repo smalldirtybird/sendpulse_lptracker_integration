@@ -159,3 +159,20 @@ def get_users(token: str) -> dict:
     }
     response = requests.get(urljoin(base_url, path), headers=headers)
     return response.json()['result']
+
+
+def change_lead_owner(token: str, lead_id: int, lead_owner_id: int):
+    path = f'/lead/{lead_id}/owner'
+    headers = {
+        'token': token,
+    }
+    payload = {
+        'owner': lead_owner_id
+    }
+    response = requests.put(
+        urljoin(base_url, path),
+        headers=headers,
+        json=payload,
+    )
+    response.raise_for_status()
+    return response.json()

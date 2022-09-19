@@ -15,6 +15,14 @@ sp_token_expires = datetime.now()
 sp_token = None
 lpt_token_expires = datetime.now()
 lpt_token = None
+lpt_users = []
+
+
+def create_users_list(users, users_to_exclude):
+    for user in users:
+        user_id = int(user['id'])
+        if user_id not in users_to_exclude:
+            lpt_users.append(user_id)
 
 
 def tokens_validation(sp_id, sp_secret, lpt_login, lpt_password, lpt_grant,
@@ -66,6 +74,7 @@ def main():
     with open('config.json', 'r') as config_json:
         config = json.load(config_json)
     lpt_project_id = config['lpt_project_id']
+    users_to_exclude = [0]
     while True:
         try:
             tokens_validation(
@@ -86,6 +95,10 @@ def main():
             if sp_deals:
                 logger.info(f'{datetime.now()}: found deals: {len(sp_deals)}.')
             for deal in sp_deals:
+                if not lpt_users:
+                    create_users_list(lptracker.get_users(lpt_token),
+                                      users_to_exclude)
+                print(lpt_users)
                 deal_id = deal['id']
                 logger.info(f'{datetime.now()}: start handle deal {deal_id}.')
                 sp_final_status = config['sp_fail_status']
@@ -122,6 +135,15 @@ def main():
                         lead_id = lead_created["result"]["id"]
                         logger.info(f'{datetime.now()}: created lead'
                                     f' {lead_id}.')
+                        lead_owner_id = lpt_users[0]
+                        new_lead_owner_id = lptracker.change_lead_owner(
+                            lpt_token,
+                            lead_id,
+                            lead_owner_id,
+                        )['result']['owner_id']
+                        lpt_users.remove(new_lead_owner_id)
+                        logger.info(f'{datetime.now()}: lead owner changed to'
+                                    f' {new_lead_owner_id}.')
                 sendpulse.change_deal_status(
                     sp_token,
                     deal_details['id'],
