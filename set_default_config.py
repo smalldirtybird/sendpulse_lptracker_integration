@@ -36,7 +36,7 @@ def main():
         'sendpulse_lptracker_integration',
     )['result']['token']
     print('\nПользователи LPTracker:')
-    for user in get_users(lpt_token)['result']:
+    for user in get_users(lpt_token):
         print(f'{user["id"]}: {user["name"]}, {user["job"]}')
     print('\nПроекты LPTracker')
     projects = {}
