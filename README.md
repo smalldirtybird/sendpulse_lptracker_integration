@@ -1,9 +1,12 @@
 # Интеграция сервисов [SendPulse](https://login.sendpulse.com) и [LPTracker](https://my.lptracker.ru)
-После запуска скрипт в автоматическом режиме находит новые сделки в воронке [SendPulse](https://login.sendpulse.com) и переносит их в [LPTracker](https://my.lptracker.ru).
+
+После запуска скрипт в автоматическом режиме находит новые сделки в воронке [SendPulse](https://login.sendpulse.com) и переносит их в [LPTracker](https://my.lptracker.ru), последовательно распределяя между пользователями скрипта.
+
 
 ## Подготовка
 
 Скачайте репозиторий на компьютер любым удобным способом и следуйте инструкциям ниже.
+
 
 ### Настройка окружения
 
@@ -35,7 +38,6 @@ LPTRACKER_LOGIN = example@email.co
 LPTRACKER_PASSWORD = eXaMPlepWd
 SP_ID = bsbo1m9e6tae1xct3dbo7n9oetcc7o0p2y5
 SP_SECRET = s1o2maedt4e7x7tdd1o6n8oet0ccobp3y7
-
 ```
 
 
@@ -50,8 +52,8 @@ SP_SECRET = s1o2maedt4e7x7tdd1o6n8oet0ccobp3y7
   "lpt_token_lifetime": 86400, # время жизни токена LPTracker в секундах
   "lpt_project_id": 94698, # id проекта LPTracker
   "lpt_new_lead_step": 1708039, # id шага воронки LPTracker, в который попадает сделка при переносе
-  "lpt_lead_owner_id": 33327, # id владельца сделки в LPTracker
-  "lpt_callback": false, # запрос обратного звонка
+  "lpt_exclude_from_owners": [0], # список id пользователей LPTracker, которых запрещено делать владельцами новых лидов
+  "lpt_callback": false, # запрос обратного звонка, где true - запросить звонок, false - не запрашивать
   "sp_search_status_ids": [1], # массив с id статусов сделок Sendpulse, по которым ведётся поиск новых сделок
   "sp_step_ids": [142896], # массив с id шагов воронки Sendpulse, по которым ведётся поиск новых сделок
   "sp_pipeline_ids": [43308], # массив с id воронки Sendpulse, в которым ведётся поиск новых сделок
@@ -60,6 +62,22 @@ SP_SECRET = s1o2maedt4e7x7tdd1o6n8oet0ccobp3y7
   "exception_delay": 60 # задержка перед возобновлением работы скрипта при возникновении ошибок в секундах
 }
 ```
+
+Для создания файла с настройками по умолчанию можно использовать кофигуратор, он запускается следующей командой:
+```
+python3 set_default_config.py
+```
+
+По итогу будет создан файл config.json с базовыми настройками, а так же в терминале будут показаны параметры проектов и воронок LPTracker и SendPulse.
+Откройте файл командой
+```
+nano config.json
+```
+
+Выходим, сохраняем и подтверждаем `Ctrl + X`, `Y`, `Enter`.
+
+ВНИМАНИЕ: повторный запуск команды `set_default_config.py` перезапишет все данные в файле базовыми, все изменения будут удалены.
+
 
 ## Запуск
 
@@ -71,5 +89,4 @@ python3 main.py
 ```
 python3 main.py &
 ```
-Для вывода скрипта из фонового режима используйте команду `fb`.
-Для прекращения работы используйте комбинацию `Ctrl + C`.
+Для вывода скрипта из фонового режима используйте команду `fg`.  Для прекращения работы используйте комбинацию `Ctrl + C`.

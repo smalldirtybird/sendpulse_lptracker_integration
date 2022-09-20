@@ -140,7 +140,7 @@ def get_leads(token: str, project_id: int) -> dict:
         params=params,
         headers=headers,
     )
-    return response.json()
+    return response.json()['result']
 
 
 def get_projects(token: str) -> dict:
@@ -158,4 +158,21 @@ def get_users(token: str) -> dict:
         'token': token
     }
     response = requests.get(urljoin(base_url, path), headers=headers)
+    return response.json()['result']
+
+
+def change_lead_owner(token: str, lead_id: int, lead_owner_id: int):
+    path = f'/lead/{lead_id}/owner'
+    headers = {
+        'token': token,
+    }
+    payload = {
+        'owner': lead_owner_id
+    }
+    response = requests.put(
+        urljoin(base_url, path),
+        headers=headers,
+        json=payload,
+    )
+    response.raise_for_status()
     return response.json()

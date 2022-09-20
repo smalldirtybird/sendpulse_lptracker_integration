@@ -17,7 +17,7 @@ def main():
         'lpt_token_lifetime': 86400,
         'lpt_project_id': None,
         'lpt_new_lead_step': None,
-        'lpt_lead_owner_id': 0,
+        'lpt_exclude_from_owners': [],
         'lpt_callback': True,
         'sp_search_status_ids': [1],
         'sp_pipeline_ids': [],
