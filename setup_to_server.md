@@ -287,3 +287,5 @@ cd ~/git/sendpulse_lptracker_integration
 ```
 git pull
 ```
+
+Перед запуском обновлённого приложения, необходимо проверить содержимое файлов .env и config.json.
