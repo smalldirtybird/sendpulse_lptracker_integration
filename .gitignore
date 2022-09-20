@@ -154,3 +154,4 @@ test/
 test*
 config.json
 logs/
+nohup.out
